@@ -1,11 +1,14 @@
-import express, {Request, Response, Express} from 'express';
-
+import express, { Request, Response, Express } from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { router as auth } from './routes/auth';
+dotenv.config();
 const app: Express = express();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+app.use(express.json());
+app.use(cors());
+app.use('/auth',auth)
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
