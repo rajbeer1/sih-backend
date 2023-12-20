@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 
 export interface UserPayload {
-    id: string;
+    
     email: string;
 }
 declare global {
@@ -21,7 +21,7 @@ async function isLoggedIn(req: Request, res: Response, next: NextFunction) {
 
     if (!decoded) {
         return res.status(403).json({
-            success: false,
+            success: false,  
             data: "Not Authorised",
         });
     }

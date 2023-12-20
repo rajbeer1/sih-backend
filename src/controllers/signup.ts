@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { UserSignup } from "../dto";
 import { handleErrors,password_crypt,create_token } from "../utils";
 import * as EmailValidator from 'email-validator';
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { User } from "../models/user";
 export const signup = async (req: Request, res: Response) => {
   try {
     const data = req.body;
@@ -20,10 +19,14 @@ export const signup = async (req: Request, res: Response) => {
       })
     }
     const hashedpassword = await password_crypt(data.password);
-    const token = await create_token(data.email);
-    const insert = await prisma.user.create({
-      data:{name:data.name,password:hashedpassword,email:data.email}
-    })
+    const token = await create_token(data.email,data.name);
+   const newUser = new User({
+  name: data.name,
+  password: hashedpassword, 
+  email: data.email
+});
+
+const insert = await newUser.save();
     res.set('Authorization', `Bearer ${token}`);
 
     res.json({
