@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { handleErrors, password_compare,create_token } from "../utils";
 import { UserLogin } from "../dto";
 import * as EmailValidator from 'email-validator';
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { User } from "../models/user";
 export const login = async (req: Request, res: Response) => {
   try {
     const data = req.body;
@@ -18,9 +17,8 @@ export const login = async (req: Request, res: Response) => {
         "message": "email is invalid"
       })
     }
-    const find = await prisma.user.findFirst({
-      where: { email: data.email }
-    })
+    const find = await User.findOne({ email: data.email });
+
     if (!find) {
       return res.status(400).json({
         "message":"user doesn't exist"
@@ -35,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
         "message":"password doesn't match"
       })
     }
-    const token = await create_token(data.email);
+    const token = await create_token(data.email,find.id);
     res.set('Authorization', `Bearer ${token}`);
     res.send(find)
   } catch (err) {
