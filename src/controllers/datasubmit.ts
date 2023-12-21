@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { handleErrors,} from "../utils";
-import { PrismaClient } from '@prisma/client'
 import { data } from "../dto";
 import { string } from "zod";
 import { UserPayload } from "../middleware/isloggedin";
 import { Datainput } from "../models/data";
-const prisma = new PrismaClient()
 
 export const dataSubmit = async (req: Request,res:Response) => {
   const users =req.user as UserPayload;
