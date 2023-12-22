@@ -38,9 +38,9 @@ const sendSos = async (req: Request, res: Response) => {
 
 const getSos = async (req: Request, res: Response) => {
     try {
-        const email = req.body.email
+        
 
-        const sosArray = await Sos.find({ email }).sort({ time: -1 })
+        const sosArray = await Sos.find({  }).sort({ time: -1 })
 
         res.status(200).json({
             status: 'success',
