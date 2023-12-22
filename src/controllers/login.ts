@@ -35,8 +35,11 @@ export const login = async (req: Request, res: Response) => {
     }
     const token = await create_token(data.email,find.id);
     res.set('Authorization', `Bearer ${token}`);
-    res.send(find)
-  } catch (err) {
+    res.json({
+      "data": find,
+      "token":token
+  })
+} catch (err) {
     handleErrors(res,err)
   }
 }
