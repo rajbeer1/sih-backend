@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { handleErrors,} from "../utils";
 import { data } from "../dto";
-import { string } from "zod";
 import { UserPayload } from "../middleware/isloggedin";
 import { Datainput } from "../models/data";
 
@@ -23,11 +21,14 @@ export const dataSubmit = async (req: Request,res:Response) => {
   latitude: input.latitude,
   longitude: input.longitude,
   pressure: input.pressure,
-  vibration: input.vibration
+  vibration: input.vibration,
+  distance: input.distance,
+  gas: input.gas,
+  air_particulate:input.air
 });
 
 const insert = await newDataInput.save();
-  console.log("efs");
+ 
   res.send(insert)
   
 

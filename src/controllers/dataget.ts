@@ -7,7 +7,7 @@ export const dataGet = async (req: Request, res: Response) => {
   const type = req.params.toget;
   const limit = req.query.limit as any;
   const users = req.user as UserPayload;
-  const result = await Datainput.find({ email: users.email }).select(`${type} -_id`).limit(limit);
+  const result = await Datainput.find({ email: users.email }).sort({createdAt:-1}).select(`${type} -_id`).limit(limit);
 
   res.send(result);
 }
