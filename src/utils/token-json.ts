@@ -1,8 +1,8 @@
 import jsonwebtoken from 'jsonwebtoken';
 
-const create_token = async (email, id) => {
+const create_token = async (email, id,admin="") => {
   
-  const token = jsonwebtoken.sign({ email, id }, process.env.JWT_SECRET, {expiresIn: '48h'});
+  const token = jsonwebtoken.sign({ email, id,admin }, process.env.JWT_SECRET, {expiresIn: '48h'});
   return token
 
 

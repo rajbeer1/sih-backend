@@ -23,8 +23,7 @@ export const dataSubmit = async (req: Request,res:Response) => {
   pressure: input.pressure,
   vibration: input.vibration,
   distance: input.distance,
-  gas: input.gas,
-  air_particulate:input.air
+  gas: input.gas
 });
 
 const insert = await newDataInput.save();
