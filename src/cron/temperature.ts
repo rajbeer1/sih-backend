@@ -1,5 +1,6 @@
 import { Datainput } from "../models/data";
 import { User } from "../models/user";
+import SocketServer from "../socket";
 
 export async function checkTemperatureForAllUsers(limit) {
   try {
@@ -13,7 +14,10 @@ export async function checkTemperatureForAllUsers(limit) {
         .select('temperature createdAt -_id');
       const highTemperatureReadings = readings.filter(reading => reading.temperature > limit);
       if (highTemperatureReadings.length > 0) {
-        console.log(`Temperature too high for ${user.email}`);
+        const instance = SocketServer.getInstance()
+        console.log(user.email)
+        instance.sostemp(user.email, { "message": { "title": "High temperature detected", "data": "the temperature is too high outside take precaution" } })
+        return
       }
 
       if (readings.length > 0) {
@@ -23,7 +27,10 @@ export async function checkTemperatureForAllUsers(limit) {
         const temperatureDifference = Math.abs(maxTemperature - minTemperature);
 
         if (temperatureDifference > 8) {
-          console.log(`Large variation for ${user.email}`);
+          const instance = SocketServer.getInstance()
+          console.log(user.email)
+          instance.sostemp(user.email, { "message": { "title": "large variation in temperature detected", "data": "the variation is high pls take into account before stepping out" } })
+          return
         }
       }
     }

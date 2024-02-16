@@ -44,12 +44,13 @@ data_template = {
 
 # List of emails
 emails = [
-    "anu@gmail.com"
+    "k@gmail.com",
+    "j@gmail.com",
 ]
 
 # Insert randomized data for each email
 for email in emails:
-    for _ in range(5):
+    for _ in range(20):
         new_data = {key: custom_randomize(key, value) for key, value in data_template.items()}
         new_data["email"] = email
         new_data["_id"] = str(uuid.uuid4())

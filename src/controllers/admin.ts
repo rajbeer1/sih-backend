@@ -19,7 +19,7 @@ export const adminogin = async(req: Request, res: Response) => {
 
     if (!find) {
       return res.status(400).json({
-        "message":"Miner doesn't exist"
+        "message":"Admin doesn't exist"
       })
     }
     
@@ -51,11 +51,11 @@ export const adminsignup = async(req: Request, res:Response) => {
       })
     }
   if (already) {
-    return res.json({"message":"Admin already exits"})
+    return res.status(400).json({"message":"Admin already exits"})
   }
   const finuser = await User.findOne({ email })
   if (finuser) {
-    return res.json({"message":"email belongs to a Miner"})
+    return res.status(400).json({"message":"email belongs to a Miner"})
   }
   const hashedpassword = await password_crypt(password)
   const added = new Admin({ email, name, password: hashedpassword })

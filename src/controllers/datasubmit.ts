@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { data } from "../dto";
 import { UserPayload } from "../middleware/isloggedin";
 import { Datainput } from "../models/data";
+import { User } from "../models/user";
 
 export const dataSubmit = async (req: Request,res:Response) => {
   const users =req.user as UserPayload;
@@ -23,7 +24,7 @@ export const dataSubmit = async (req: Request,res:Response) => {
   pressure: input.pressure,
   vibration: input.vibration,
   distance: input.distance,
-  gas: input.gas
+   gas: input.gas
 });
 
 const insert = await newDataInput.save();

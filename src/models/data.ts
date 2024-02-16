@@ -11,6 +11,7 @@ const datainputSchema = new Schema({
   email: { type: String, required: true },
   gas: { type: Number, required: true },
   
+  
 }, {
   timestamps:true
 });

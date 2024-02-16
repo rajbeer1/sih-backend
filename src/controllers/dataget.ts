@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { data } from "../dto";
 import { UserPayload } from "../middleware/isloggedin";
 import { Datainput } from "../models/data";
+import { handleErrors } from "../utils";
 
 
 export const dataGet = async (req: Request, res: Response) => {
@@ -12,4 +13,42 @@ export const dataGet = async (req: Request, res: Response) => {
 
 
   res.send(result);
+}
+
+
+export const dataForbox = async (req:Request,res:Response) => {
+  try {
+    const data = req.user as UserPayload
+    const email = data.email;
+    const result = await Datainput.find({ email }).sort({ createdAt: -1 }).select('temperature latitude longitude altitude').limit(1);
+    const distance = await Datainput.find({ email }).sort({ createdAt: -1 }).select('distance').limit(15);
+    const vibration = await Datainput.find({ email }).sort({ createdAt: -1 }).select('vibration').limit(15);
+    let ismoving = 0;
+    let vib = 0;
+    let collision = 0;
+    vibration.map((vibr) => 
+      
+    {
+      if (vibr.vibration === 1) {
+        ismoving++;
+      }
+    })
+    if (ismoving >6) {
+      vib =1
+    }
+    
+    distance.map((dist) => ((collision += dist.distance)))
+    const distaence = collision/distance.length
+    const tosend = {
+      "temperature": result[0].temperature.toFixed(2),
+      "latitude": result[0].latitude.toFixed(4),
+      "longitude": result[0].longitude.toFixed(4),
+      "altitude": result[0].altitude.toFixed(3),
+      "distance": distaence.toFixed(3),
+      "vibration":vib
+   }
+    res.send(tosend)
+  } catch (error) {
+    handleErrors(error,res)
+  }
 }

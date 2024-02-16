@@ -48,8 +48,16 @@ class SocketServer {
     });
   }
   
-  public sendDataToUserByEmail(email: string, data: any): void {
-    this.io.to(email).emit('SOS', data); 
+  public sostemp(email: string, data: any): void {
+    this.io.to(email).emit('SOS-temp', data); 
+    
+  }
+  public sosgas(email: string, data: any): void {
+    this.io.to(email).emit('SOS-gas', data); 
+    
+  }
+  public sosvibration(email: string, data: any): void {
+    this.io.to(email).emit('SOS-vibration', data); 
     
 }
 

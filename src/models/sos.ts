@@ -9,6 +9,8 @@ const sosSchema = new Schema({
     temperature: { type: Number, required: true },
     altitude: { type: Number, required: true },
     email: { type: String, required: true },
+    type: { type: String, required: true },
+    resolved:{type:Boolean,default: false}
 })
 
 export const Sos = mongoose.model('Sos', sosSchema);

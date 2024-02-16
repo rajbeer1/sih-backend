@@ -2,32 +2,32 @@ import { Datainput } from '../models/data';
 import { Response, Request } from 'express';
 import { handleErrors } from '../utils';
 import { UserPayload } from '../middleware/isloggedin';
-
+import { User } from '../models/user';
+import { Admin } from '../models/admin';
 const getDataCoordinates = async (req: Request, res: Response) => {
-  const data = await Datainput.aggregate([
-    { $sort: { createdAt: -1 } },
-    {
-      $group: {
-        _id: '$email',
-        latestLatitude: { $first: '$latitude' },
-        latestLongitude: { $first: '$longitude' },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        email: '$_id',
-        latitude: '$latestLatitude',
-        longitude: '$latestLongitude',
-      },
-    },
-  ]);
-
-  res.json(data);
-};
-const getCoordinatesWithinRadius = async (req: Request, res: Response) => {
   try {
+    // Assuming req.user contains the admin's email directly
+    const adminEmail = req.user.email;
+  console.log(adminEmail)
+    // First, find the admin ID based on the admin's email
+    const admin = await Admin.findOne({ email: adminEmail });
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+    const adminId = admin._id;
+
+    // Adjust the aggregation pipeline to filter data inputs by the admin ID
     const data = await Datainput.aggregate([
+      {
+        $lookup: {
+          from: 'users', // Assuming 'users' is the name of the collection
+          localField: 'email',
+          foreignField: 'email',
+          as: 'user_info',
+        },
+      },
+      { $unwind: '$user_info' },
+      { $match: { 'user_info.admin': adminId } }, // Filter by admin ID
       { $sort: { createdAt: -1 } },
       {
         $group: {
@@ -45,15 +45,63 @@ const getCoordinatesWithinRadius = async (req: Request, res: Response) => {
         },
       },
     ]);
-      const user = req.user as UserPayload;
-      const radiusKm = 50
-      const email = user.email
-    const referencePoint = data.find((item) => item.email === email);
-      if (!referencePoint) {
-        console.log(referencePoint)
-      console.log('Email not found');
-      return [];
+  console.log(data)
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};
+
+const getCoordinatesWithinRadius = async (req: Request, res: Response) => {
+  try {
+    // Fetch admin ID of the requesting user from User collection
+    const userPayload = req.user as UserPayload;
+    const user = await User.findOne({ email: userPayload.email });
+    if (!user || !user.admin) {
+      return res.status(404).json({ message: 'User or admin not found' });
     }
+    const userAdminId = user.admin;
+
+    // Adjust the aggregation pipeline to include a lookup to fetch admin from User collection
+    const data = await Datainput.aggregate([
+      {
+        $lookup: {
+          from: 'users', // Assuming 'users' is the collection name for User model
+          localField: 'email',
+          foreignField: 'email',
+          as: 'user_info',
+        },
+      },
+      { $unwind: '$user_info' }, // Unwind the user_info to access the fields
+      { $match: { 'user_info.admin': userAdminId } }, // Match documents where admin is the same as the requesting user's admin
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: '$email',
+          latestLatitude: { $first: '$latitude' },
+          latestLongitude: { $first: '$longitude' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          email: '$_id',
+          latitude: '$latestLatitude',
+          longitude: '$latestLongitude',
+        },
+      },
+    ]);
+
+    const radiusKm = 50;
+    const referencePoint = data.find(
+      (item) => item.email === userPayload.email
+    );
+    if (!referencePoint) {
+      console.log('Reference point not found');
+      return res.json([]);
+    }
+
     const filteredData = data.filter((item) => {
       const distance = calculateDistance(
         referencePoint.latitude,
@@ -64,11 +112,13 @@ const getCoordinatesWithinRadius = async (req: Request, res: Response) => {
       return distance <= radiusKm;
     });
 
-    res.json(filteredData)
+    res.json(filteredData);
   } catch (error) {
-    handleErrors(res, error);
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred' });
   }
 };
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * (Math.PI / 180);
