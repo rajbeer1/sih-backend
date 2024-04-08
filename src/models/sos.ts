@@ -13,4 +13,4 @@ const sosSchema = new Schema({
     resolved:{type:Boolean,default: false}
 })
 
-export const Sos = mongoose.model('Sos', sosSchema);
+export const Sos = mongoose.models.sos||mongoose.model('Sos', sosSchema);

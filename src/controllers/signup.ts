@@ -37,7 +37,7 @@ export const signup = async (req: Request, res: Response) => {
   name: data.name,
   password: hashedpassword, 
      email: data.email,
-  admin: findadmin.id
+  admin: findadmin.email
 });
 
 const insert = await newUser.save();
@@ -49,6 +49,7 @@ const insert = await newUser.save();
   })
 
   } catch (err) {
-    handleErrors(err,res)
+    console.log(err)
+    return res.json({"message":"interval server error"}).status(500)
   }
 }

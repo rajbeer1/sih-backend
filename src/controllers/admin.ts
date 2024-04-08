@@ -24,20 +24,23 @@ export const adminogin = async(req: Request, res: Response) => {
     }
     
     const compare = await password_compare(data.password, find.password);
+
     
     if (!compare) {
       return res.status(400).json({
         "message":"password doesn't match"
       })
     }
-    const token = await create_token(data.email,find.name);
+    const token = await create_token(data.email, find.name);
+
+    
     res.set('Authorization', `Bearer ${token}`);
-    res.json({
+    return res.json({
       "data": find,
       "token":token
   })
 } catch (err) {
-    handleErrors(res,err)
+   return res.status(500)
   }
 }
 

@@ -16,4 +16,4 @@ const datainputSchema = new Schema({
   timestamps:true
 });
 
-export const Datainput = mongoose.model('Datainput', datainputSchema);
+export const Datainput = mongoose.models.datainput ||mongoose.model('Datainput', datainputSchema);

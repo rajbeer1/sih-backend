@@ -6,10 +6,9 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   admin: {
-    type: Schema.Types.ObjectId, 
-    ref: 'Admin', 
+    type: String
 
   },
 });
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.models.User||mongoose.model('User', userSchema);

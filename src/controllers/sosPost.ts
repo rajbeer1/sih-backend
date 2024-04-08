@@ -35,7 +35,7 @@ export const getsos =async (req:Request,res:Response) => {
   try {
     const adminEmail = req.user.email;
     const admin = await Admin.findOne({ email: adminEmail });
-    const AdminId = admin._id;
+    const AdminId = admin.email;
     const users = await User.find({ admin: AdminId })
     
     const data = [];

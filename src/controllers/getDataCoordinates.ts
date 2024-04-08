@@ -14,7 +14,7 @@ const getDataCoordinates = async (req: Request, res: Response) => {
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }
-    const adminId = admin._id;
+    const adminId = admin.email;
 
     // Adjust the aggregation pipeline to filter data inputs by the admin ID
     const data = await Datainput.aggregate([

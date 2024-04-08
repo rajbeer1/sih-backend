@@ -7,4 +7,4 @@ const photodataSchema = new Schema({
   ml_detail: String
 });
 
-export const photodata = mongoose.model('photodata', photodataSchema);
+export const photodata = mongoose.models.photodata||mongoose.model('photodata', photodataSchema);

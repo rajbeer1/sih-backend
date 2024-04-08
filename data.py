@@ -44,8 +44,22 @@ data_template = {
 
 # List of emails
 emails = [
-    "k@gmail.com",
-    "j@gmail.com",
+   "a@gmail.com",
+   "b@gmail.com",
+   "c@gmail.com",
+   "d@gmail.com",
+   "e@gmail.com",
+   "f@gmail.com",
+   "g@gmail.com",
+   "h@gmail.com",
+   "i@gmail.com",
+   "j@gmail.com",
+   "k@gmail.com",
+   "l@gmail.com",
+   "m@gmail.com",
+   "n@gmail.com",
+   "o@gmail.com",
+   
 ]
 
 # Insert randomized data for each email

@@ -6,4 +6,5 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
 
 });
-export const Admin = mongoose.model('admin', userSchema);
+export const Admin =
+  mongoose.models.admin || mongoose.model('admin', userSchema);
