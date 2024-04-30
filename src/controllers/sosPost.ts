@@ -6,6 +6,7 @@ import { UserPayload } from '../middleware/isloggedin';
 import { Admin } from '../models/admin';
 import { User } from '../models/user';
 import { checkSosforadmin } from '../cron/sosadmin';
+import { Fine } from '../models/fine';
 export const postsos = async (
   req: Request,
   res: Response,
@@ -96,3 +97,13 @@ export const updatesos = async (
     next(err);
   }
 };
+export const fine = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user as UserPayload;
+    const email = user.email;
+    const changed = await Fine.create({ email: email, Fine: true });
+    res.send({"data": "changed"}); 
+  } catch (error) {
+    next(error);
+  }
+}

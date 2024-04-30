@@ -22,6 +22,7 @@ export async function checkSosforadmin() {
   
     final.map((entry) => {
       const socket = SocketServer.getInstance()
+      
       socket.checksosadmin(entry.email,entry.sos)
     })
   } catch (error) {
@@ -30,10 +31,10 @@ export async function checkSosforadmin() {
 }
 function consolidateEntries(groupedEntries) {
   return groupedEntries.map((group) => {
-    // Assuming all entries in a group have the same email
+
     const email = group[0].email;
     const allSos = group.reduce((acc, current) => {
-      // Concatenate all 'sos' arrays into one
+
       return acc.concat(current.sos);
     }, []);
 
@@ -45,13 +46,13 @@ function splitByEmail(entries) {
   const emailMap = {};
 
   entries.forEach((entry) => {
-    // Initialize an array for this email if it doesn't exist
+
     if (!emailMap[entry.email]) {
       emailMap[entry.email] = [];
     }
     emailMap[entry.email].push(entry);
   });
 
-  // Extract the arrays from the map
+
   return Object.values(emailMap);
 }

@@ -1,11 +1,16 @@
 import { Datainput } from "../models/data";
 import { User } from "../models/user";
 import SocketServer from "../socket";
-
+import { Fine } from "../models/fine";
+import { removeFromUsers } from "./gas";
 export async function checkTemperatureForAllUsers(limit) {
   try {
-    const users = await User.find().select('email');
-
+    const user = await User.find().select('email -_id');
+    const fine = await Fine.find({ Fine: true })
+      .select('email -_id')
+      .sort({ createdAt: -1 })
+      .limit(1);
+    const users = removeFromUsers(user, fine);
 
     for (const user of users) {
       const readings = await Datainput.find({ email: user.email })
@@ -15,7 +20,7 @@ export async function checkTemperatureForAllUsers(limit) {
       const highTemperatureReadings = readings.filter(reading => reading.temperature > limit);
       if (highTemperatureReadings.length > 0) {
         const instance = SocketServer.getInstance()
-
+         console.log(user.email)
         instance.sostemp(user.email, { "message": { "title": "High temperature detected", "data": "the temperature is too high outside take precaution" } })
         return
       }
@@ -28,7 +33,7 @@ export async function checkTemperatureForAllUsers(limit) {
 
         if (temperatureDifference > 8) {
           const instance = SocketServer.getInstance()
-
+          console.log(user.email);
           instance.sostemp(user.email, { "message": { "title": "large variation in temperature detected", "data": "the variation is high pls take into account before stepping out" } })
           return
         }
