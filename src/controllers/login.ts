@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { handleErrors, password_compare,create_token } from "../utils";
+import { NextFunction, Request, Response } from "express";
+import { Pass,tokens } from "../utils";
 import { UserLogin } from "../dto";
 import * as EmailValidator from 'email-validator';
 import { User } from "../models/user";
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const data = req.body;
     const parsing = UserLogin.safeParse(data);
@@ -24,22 +24,22 @@ export const login = async (req: Request, res: Response) => {
         "message":"Miner doesn't exist"
       })
     }
-    console.log(find.password)
-    console.log(data.password)
-    const compare = await password_compare(data.password, find.password);
-    console.log(compare)
+
+
+    const compare = await Pass.password_compare(data.password, find.password);
+
     if (!compare) {
       return res.status(400).json({
         "message":"password doesn't match"
       })
     }
-    const token = await create_token(data.email,find.name);
+    const token = await tokens.create_token(data.email,find.name);
     res.set('Authorization', `Bearer ${token}`);
     return res.json({
       "data": find,
       "token":token
   })
 } catch (err) {
-  return res.status(500)
+  next(err)
   }
 }

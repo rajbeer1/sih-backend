@@ -1,4 +1,3 @@
-// socketServer.ts
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
@@ -32,9 +31,9 @@ class SocketServer {
     this.io.use((socket: Socket, next) => {
       try {
         const token = socket.handshake.query.token as string;
-        console.log(token);
-        const decoded = jwt.verify(token, 'puuu') as DecodedToken;
-        console.log(decoded.email);
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as DecodedToken;
+
         socket.join(decoded.email);
         next();
       } catch (error) {
@@ -43,7 +42,7 @@ class SocketServer {
     });
 
     this.io.on('connection', (socket: Socket) => {
-      console.log('A user connected');
+
       console.log(socket.id);
     });
   }

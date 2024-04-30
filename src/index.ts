@@ -1,16 +1,17 @@
 import { Server } from './app';
-import dotenv from 'dotenv';
-import connectToDB from './utils/connect-db';
+import { config } from './config';
+config.databaseConnection()
+config.verifyConfig()
+import { checkSosforadmin } from './cron/sosadmin';
+
+checkSosforadmin()
 import cron from 'node-cron';
 import { checkVibrationsForAllUsers } from './cron/vibration';
 import { checkGasLevelsForAllUsers } from './cron/gas';
 import { checkTemperatureForAllUsers } from './cron/temperature';
-import { checkSosforadmin } from './cron/sosadmin';
-dotenv.config();
-connectToDB();
 
-// checkSosforadmin();
-// cron.schedule('*/5 * * * *', () => {
+
+// cron.schedule('*/5= * * * *', () => {
 //   console.log('Checking gas levels');
 //   checkGasLevelsForAllUsers(250);
 //   setTimeout(() => {
@@ -22,6 +23,7 @@ connectToDB();
 //     checkTemperatureForAllUsers(45);
 //   }, 60000);
 // });
-Server.listen(3200, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+checkGasLevelsForAllUsers(250);
+Server.listen(config.PORT, () => {
+  console.log(`Server is running on port ${config.PORT}`);
 });

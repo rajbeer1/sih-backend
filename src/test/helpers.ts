@@ -1,5 +1,5 @@
 import { Admin } from "../models/admin";
-import { password_crypt } from "../utils";
+import { Pass } from "../utils";
 export const adminadd = async () => {
   const admins = [{
     'name': 'rajbeer',
@@ -10,7 +10,7 @@ export const adminadd = async () => {
     }];
 
 
-    const hashedpassword = await password_crypt('1234');
+    const hashedpassword = await Pass.password_crypt('1234');
   admins.map(async(admin) => {
     const insert = new Admin({
       name: admin.name,

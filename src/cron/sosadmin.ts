@@ -9,18 +9,17 @@ export async function checkSosforadmin() {
     const sosesPromises = admins.map(async (admin) => {
       const sos = await Sos.find({ email: admin.email })
         .sort({
-          createdAt: -1,
+          time: -1,
         })
-        .limit(1);
+        .limit(1)
 
-      return { email: admin.admin, sos: sos }; 
+      return { email: admin.admin, sos: sos };
     });
     const soses = await Promise.all(sosesPromises);
 
     const groupedByEmail = splitByEmail(soses);
     const final = consolidateEntries(groupedByEmail)
-    console.log(final);
-    
+  
     final.map((entry) => {
       const socket = SocketServer.getInstance()
       socket.checksosadmin(entry.email,entry.sos)
@@ -38,7 +37,7 @@ function consolidateEntries(groupedEntries) {
       return acc.concat(current.sos);
     }, []);
 
-    return { email, sos: allSos };
+    return { email, sos: allSos }
   });
 }
 

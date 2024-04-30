@@ -16,11 +16,11 @@ export async function checkVibrationsForAllUsers() {
 
       if (readings.length === 15) {
         const instance = SocketServer.getInstance()
-        console.log(user.email)
+
         instance.sosvibration(user.email,{"message":{"title":"are you struck?","data":"the machine is not moving "}})
       } else {
 
-        console.log(`No danger detected for ${user.email}`);
+        console.log(`No danger detected for ${user.email}`)
       }
     }
   } catch (error) {
