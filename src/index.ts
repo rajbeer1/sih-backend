@@ -8,7 +8,7 @@ import { checkTemperatureForAllUsers } from './cron/temperature';
 import { deleteFine } from './cron';
 
 config.databaseConnection();
-config.verifyConfig();
+// config.verifyConfig();
 cron.schedule('*/2 * * * *', () => {
   console.log('Checking gas levels');
   checkGasLevelsForAllUsers(250);
