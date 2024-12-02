@@ -120,16 +120,43 @@ export const admininvite = async (
       expiresIn: '24h',
     });
     const link = `${config.Front_url}/sign-up?token=${jwt}`;
-   transporter.sendMail({
-      from: config.email_sender,
-      to: email,
-      subject: 'Invitation',
-      html: `<h1>Hello ${email}</h1>
-      <p>You have been invited by ${admin}</p>
-      <p>Please click on the link below to accept the invitation</p>
-      <a href=${link}>${link}</a>`,
-    })
-    res.json({data:"invitation mail sent"})
+    const body = `
+     <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verification - Scholar Sheet</title></head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f8f8; border-radius: 5px;">
+        <tr>
+          <td style="padding: 30px;">
+            <h1 style="color: #4a4a4a; font-size: 24px; margin-bottom: 20px;">Welcome, ${email}!</h1>
+            <p style="font-size: 16px; margin-bottom: 20px;">You have been invited by <strong>${admin}</strong> to join our platform.</p>
+            <p style="font-size: 16px; margin-bottom: 30px;">Please click on the button below to accept the invitation:</p>
+            <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+              <tr>
+                <td style="background-color: #007bff; border-radius: 4px; text-align: center; padding: 12px 24px;">
+                  <a href="${link}" style="color: #ffffff; text-decoration: none; font-weight: bold; font-size: 16px;">Accept Invitation</a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size: 14px; color: #888; margin-top: 30px;">If you're having trouble clicking the button, copy and paste the URL below into your web browser:</p>
+            <p style="font-size: 14px; color: #888;">${link}</p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>`;
+  transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: 'Invitation to Join Our Platform',
+    html: body,
+  });
+
+  res.json({ data: 'Invitation email sent successfully' });
+
 
   } catch (err) {
     console.log(err);
