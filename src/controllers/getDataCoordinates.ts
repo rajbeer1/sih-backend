@@ -100,7 +100,6 @@ const getCoordinatesWithinRadius = async (
       (item) => item.email === userPayload.email
     );
     if (!referencePoint) {
-
       return res.json([]);
     }
 
@@ -134,4 +133,49 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   const distance = R * c;
   return distance;
 }
-export { getDataCoordinates, getCoordinatesWithinRadius };
+
+const getDataByTimeFrame = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { timeframe } = req.params;
+    const { email } = req.query;
+    console.log(email);
+
+    let dateLimit: Date;
+
+    switch (timeframe) {
+      case '1week':
+        dateLimit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); 
+        break;
+      case '2weeks':
+        dateLimit = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000); 
+        break;
+      case '1month':
+        dateLimit = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); 
+        break;
+      case '6months':
+        dateLimit = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000); 
+        break;
+      case 'all':
+        dateLimit = new Date(0);
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid timeframe' });
+    }
+
+    const data = await Datainput.find({
+      createdAt: { $gte: dateLimit },
+      email,
+    }).sort({
+      createdAt: 1,
+    });
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { getDataCoordinates, getCoordinatesWithinRadius, getDataByTimeFrame };

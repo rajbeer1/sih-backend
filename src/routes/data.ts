@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { dataSubmit, getDataCoordinates, getCoordinatesWithinRadius,miner} from "../controllers";
+import { dataSubmit, getDataCoordinates, getCoordinatesWithinRadius,miner,getDataByTimeFrame} from "../controllers";
 import { dataForbox } from "../controllers/dataget";
 import { dataGet } from "../controllers";
 import { isLoggedIn } from "../middleware/isloggedin";
@@ -12,7 +12,8 @@ router
   .get('/miners', isLoggedIn, miner)
   .get('/cords', isLoggedIn, getDataCoordinates)
   .get('/cords/email', isLoggedIn, getCoordinatesWithinRadius)
-  .get('/:toget', isLoggedIn, dataGet);
+  .get('/:toget', isLoggedIn, dataGet)
+  .get('/graph/:timeframe', isLoggedIn, getDataByTimeFrame);
 
 
 

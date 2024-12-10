@@ -1,10 +1,10 @@
 from pymongo import MongoClient
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import uuid
 import certifi
 import random
 
-client = MongoClient('mongodb+srv://royu49:rajbeer11@cluster0.ccpypee.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=certifi.where())
+client = MongoClient('', tlsCAFile=certifi.where())
 db = client['test']
 collection = db['datainputs']
 
@@ -27,14 +27,14 @@ def custom_randomize(key, value):
 
 # Data template
 data_template = {
-    "vibration": 0,  # This will be randomized to 0 or 1
-    "distance": 20,  # Base value, will be randomized between 0 to 200
-    "temperature": 24,  # Base value, will be randomized between 16 to 48
-    "pressure": 1030.0236532872284,  # ±10% variation
-    "altitude": 529.148127382802,  # ±10% variation
-    "latitude": 30.355128387366587,  # ±1% variation
-    "longitude": 76.36910877559428,  # ±1% variation
-    "gas": 100,  # Randomly between 60 and 400
+    "vibration": 0,
+    "distance": 20,
+    "temperature": 24,
+    "pressure": 1030.0236532872284,
+    "altitude": 529.148127382802,
+    "latitude": 30.355128387366587,
+    "longitude": 76.36910877559428,
+    "gas": 100,
     "email": "",
     "_id": "",
     "createdAt": None,
@@ -42,36 +42,23 @@ data_template = {
     "__v": 0
 }
 
-# List of emails
-emails = [
-   "a@gmail.com",
-   "b@gmail.com",
-   "c@gmail.com",
-   "d@gmail.com",
-   "e@gmail.com",
-   "f@gmail.com",
-   "g@gmail.com",
-   "h@gmail.com",
-   "i@gmail.com",
-   "j@gmail.com",
-   "k@gmail.com",
-   "l@gmail.com",
-   "m@gmail.com",
-   "n@gmail.com",
-   "o@gmail.com",
-   
-]
+# Single email
+email = "z@gmail.com"
 
-# Insert randomized data for each email
-for email in emails:
-    for _ in range(20):
-        new_data = {key: custom_randomize(key, value) for key, value in data_template.items()}
-        new_data["email"] = email
-        new_data["_id"] = str(uuid.uuid4())
-        now = datetime.now(timezone.utc)
-        new_data["createdAt"] = now
-        new_data["updatedAt"] = now
+# Insert 800 randomized data points for the email
+for i in range(800):
+    new_data = {key: custom_randomize(key, value) for key, value in data_template.items()}
+    new_data["email"] = email
+    new_data["_id"] = str(uuid.uuid4())
+    
+    # Calculate createdAt spaced proportionally between the last 6 months and now
+    now = datetime.now(timezone.utc)
+    six_months_ago = now - timedelta(days=180)
+    time_difference = (now - six_months_ago).total_seconds()
+    random_time_offset = random.uniform(0, time_difference)
+    new_data["createdAt"] = six_months_ago + timedelta(seconds=random_time_offset)
+    new_data["updatedAt"] = now
 
-        collection.insert_one(new_data)
+    collection.insert_one(new_data)
 
 print("Data insertion completed.")
