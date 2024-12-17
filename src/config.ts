@@ -20,7 +20,7 @@ class Config {
       process.env.EMAIL_SENDER_PASS || 'jtqg dpno iwfp xcym';
     this.Front_url =
       process.env.FRONT_URL ||
-      'https://miner-guardian-capstone-1aar.vercel.app';
+      'https://miner.rajbeer.tech';
   }
 
   public verifyConfig(): void {
